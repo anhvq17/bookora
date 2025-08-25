@@ -88,7 +88,7 @@ const BookCarousel: React.FC = () => {
                 <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-8 items-center">
                     <div className="space-y-4 md:text-left">
                         <span className="inline-block border border-[#7644a4] text-[#7644a4] text-xs px-3 py-1 rounded-full">
-                            Tác giả của tháng Tám
+                            Tác giả của tháng
                         </span>
 
                         <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
@@ -96,10 +96,10 @@ const BookCarousel: React.FC = () => {
                         </h1>
 
                         <p className="text-gray-600">
-                            Eric-Emmanuel Schmitt đã được trao hơn 20 giải thưởng và danh hiệu văn học. Vào năm 2001, ông được phong danh hiệu Chevalier des Arts et des Lettres - Hiệp sĩ Nghệ thuật và Văn học. Các cuốn sách của ông đã được dịch ra hơn 40 ngôn ngữ...
+                            Eric-Emmanuel Schmitt được trao hơn 20 giải thưởng và danh hiệu văn học. Ông được phong danh hiệu Chevalier des Arts et des Lettres - Hiệp sĩ Nghệ thuật và Văn học. Các cuốn sách của ông đã được dịch ra hơn 40 ngôn ngữ...
                         </p>
 
-                        <button className="bg-[#4f0f87] hover:bg-[#51348f] text-white px-5 py-2 rounded transition md:ml-0 md:mr-auto block">
+                        <button className="bg-[#4f0f87] hover:bg-[#51348f] text-white px-5 py-2 rounded-xl transition md:ml-0 md:mr-auto block">
                             Xem ngay
                         </button>
                     </div>

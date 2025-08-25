@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react"
 import { Link, useNavigate } from "react-router-dom"
-import { Search, ShoppingCart, Heart, User, Phone } from "lucide-react"
+import { ShoppingCart, Heart, User, Phone } from "lucide-react"
 
 type Props = {}
 
@@ -51,11 +51,9 @@ const Header = (_props: Props) => {
           >
             Book<span className="text-[#9966cb]">ora</span>
           </Link>
-          <div className="hidden md:block w-px h-6 bg-gray-300"></div>
-          <span className="hidden md:block text-gray-500 font-medium">We love books</span>
         </div>
 
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-24">
           <form
             className="relative w-80"
             onSubmit={(e) => {
@@ -64,31 +62,24 @@ const Header = (_props: Props) => {
           >
             <input
               type="text"
-              placeholder="Tìm kiếm sách..."
-              className="rounded-full text-sm w-full outline-none focus:ring-2 focus:ring-purple-300 focus:border-transparent pr-12 bg-white border border-gray-200 py-3 px-5 shadow-sm hover:shadow-md transition-shadow duration-200"
+              placeholder="Tìm kiếm sách"
+              className="rounded-full text-sm w-full outline-none focus:ring-1 focus:ring-purple-100 focus:border-transparent pr-12 bg-white border border-gray-200 py-3 px-5 shadow-sm hover:shadow-md transition-shadow duration-200"
             />
-            <button
-              type="submit"
-              className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center justify-center w-8 h-8 bg-[#4f0f87] rounded-full text-white hover:bg-[#51348f] transition-all duration-200 hover:scale-105"
-            >
-              <Search size={16} />
-            </button>
           </form>
-        </div>
-
-        <div className="flex items-center space-x-8 text-gray-600 relative">
-          <div className="hidden lg:flex items-center space-x-6">
-            <a href="#" className="text-[#51348f] hover:text-[#9966cb] transition-colors duration-200 font-medium">
+          <div className="lg:flex items-center space-x-6">
+            <a href="#" className="text-[#51348f] hover:text-[#9966cb] transition-colors duration-200 font-medium relative group">
               Chính sách bảo mật
             </a>
-            <a href="#" className="text-[#51348f] hover:text-[#9966cb] transition-colors duration-200 font-medium">
+            <a href="#" className="text-[#51348f] hover:text-[#9966cb] transition-colors duration-200 font-medium relative group">
               Bảo hành
             </a>
-            <a href="#" className="text-[#51348f] hover:text-[#9966cb] transition-colors duration-200 font-medium">
+            <a href="#" className="text-[#51348f] hover:text-[#9966cb] transition-colors duration-200 font-medium relative group">
               Vận chuyển
             </a>
           </div>
+        </div>
 
+        <div className="flex items-center space-x-8 text-gray-600 relative">
           <div className="flex items-center space-x-4">
             <Link
               to={"/cart"}
@@ -196,13 +187,10 @@ const Header = (_props: Props) => {
         </div>
 
         <div className="flex items-center space-x-6">
-          <div className="flex items-center space-x-2 text-[#7644a4] font-medium">
+          <div className="flex items-center space-x-2 text-[#4f0f87] font-medium">
             <Phone size={16} className="transform scale-x-[-1]" />
-            <span>+84 338 538 663</span>
+            <span>0977 907 877</span>
           </div>
-          <button className="border-2 border-[#51348f] text-[#7644a4] bg-white px-6 py-2 rounded-full hover:bg-[#51348f] hover:text-white transition-all duration-200 font-medium hover:shadow-md">
-            Liên hệ ngay
-          </button>
         </div>
       </div>
     </div>

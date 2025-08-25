@@ -91,12 +91,12 @@ const Footer = () => {
               </h3>
               <ul className="space-y-3">
                 <li>
-                  <a className="text-white/80 hover:text-white transition-colors duration-300 text-sm" href="#">
+                  <a className="text-white/80 hover:text-white transition-colors duration-300 text-sm" href="/login">
                     Đăng nhập
                   </a>
                 </li>
                 <li>
-                  <a className="text-white/80 hover:text-white transition-colors duration-300 text-sm" href="#">
+                  <a className="text-white/80 hover:text-white transition-colors duration-300 text-sm" href="/register">
                     Đăng ký
                   </a>
                 </li>
@@ -130,8 +130,8 @@ const Footer = () => {
                   </div>
                   <span className="text-sm">bkr@gmail.com</span>
                 </div>
-                <div className="space-y-5">
-                  <button className="w-full bg-white text-[#4f0f87] px-6 py-2 rounded-xl font-medium hover:bg-white/90 transition-all duration-300 flex items-center justify-center space-x-2 group">
+                <div>
+                  <button className="mt-8 w-full bg-white text-[#4f0f87] px-6 py-2 rounded-xl font-medium hover:bg-white/90 transition-all duration-300 flex items-center justify-center space-x-2 group">
                     <span>Liên hệ ngay</span>
                     <ArrowRight className="mt-1 w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
                   </button>

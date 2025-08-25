@@ -1,4 +1,4 @@
-import Product from '../components/common/product';
+import Product from '../components/common/Main';
 
 const HomePage = () => {
     return <Product />;
