@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react"
 import { Link, useNavigate } from "react-router-dom"
-import { ShoppingCart, Heart, User, Phone } from "lucide-react"
+import { ShoppingCart, Heart, User, Phone, Search } from "lucide-react"
 
 type Props = {}
 
@@ -55,7 +55,7 @@ const Header = (_props: Props) => {
 
         <div className="flex items-center space-x-24">
           <form
-            className="relative w-80"
+            className="relative w-[600px]"
             onSubmit={(e) => {
               e.preventDefault()
             }}
@@ -65,32 +65,27 @@ const Header = (_props: Props) => {
               placeholder="Tìm kiếm sách"
               className="rounded-full text-sm w-full outline-none focus:ring-1 focus:ring-purple-100 focus:border-transparent pr-12 bg-white border border-gray-200 py-3 px-5 shadow-sm hover:shadow-md transition-shadow duration-200"
             />
+            <button
+              type="submit"
+              className="absolute right-4 top-1/2 -translate-y-1/2 bg-white text-[#4f0f87] hover:text-[#51348f] hover:border-white transition-all duration-200 hover:scale-110 p-1 rounded-full"
+            >
+              <Search size={20} />
+            </button>
           </form>
-          <div className="lg:flex items-center space-x-6">
-            <a href="#" className="text-[#51348f] hover:text-[#9966cb] transition-colors duration-200 font-medium relative group">
-              Chính sách bảo mật
-            </a>
-            <a href="#" className="text-[#51348f] hover:text-[#9966cb] transition-colors duration-200 font-medium relative group">
-              Bảo hành
-            </a>
-            <a href="#" className="text-[#51348f] hover:text-[#9966cb] transition-colors duration-200 font-medium relative group">
-              Vận chuyển
-            </a>
-          </div>
         </div>
 
         <div className="flex items-center space-x-8 text-gray-600 relative">
           <div className="flex items-center space-x-4">
             <Link
               to={"/cart"}
-              className="hover:text-[#51348f] text-[#4f0f87] transition-all duration-200 hover:scale-110 p-2 rounded-full hover:bg-purple-50"
+              className="hover:text-[#51348f] text-[#4f0f87] transition-all duration-200 hover:scale-110 p-2 rounded-full"
             >
               <ShoppingCart size={20} />
             </Link>
             <div className="w-px h-6 bg-gray-300"></div>
             <a
               href="#"
-              className="hover:text-[#51348f] text-[#4f0f87] transition-all duration-200 hover:scale-110 p-2 rounded-full hover:bg-purple-50"
+              className="hover:text-[#51348f] text-[#4f0f87] transition-all duration-200 hover:scale-110 p-2 rounded-full"
             >
               <Heart size={20} />
             </a>
@@ -99,7 +94,7 @@ const Header = (_props: Props) => {
             <div className="relative" ref={menuRef}>
               <div
                 onClick={() => setOpenUserMenu((prev) => !prev)}
-                className="hover:text-[#51348f] text-[#4f0f87] transition-all duration-200 hover:scale-110 cursor-pointer p-2 rounded-full hover:bg-purple-50"
+                className="hover:text-[#51348f] text-[#4f0f87] transition-all duration-200 hover:scale-110 cursor-pointer p-2 rounded-full"
               >
                 <User size={20} />
               </div>
