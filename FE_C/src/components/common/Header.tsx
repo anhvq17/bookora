@@ -107,6 +107,12 @@ const Header = (_props: Props) => {
                         <div className="truncate">{user.fullname || user.email}</div>
                       </div>
                       <Link
+                        to="/account"
+                        className="block px-5 py-3 text-gray-700 hover:bg-purple-50 hover:text-[#51348f] transition-colors duration-200 border-b border-gray-100"
+                      >
+                        Tài khoản
+                      </Link>
+                      <Link
                         to="/order"
                         className="block px-5 py-3 text-gray-700 hover:bg-purple-50 hover:text-[#51348f] transition-colors duration-200 border-b border-gray-100"
                       >

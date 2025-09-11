@@ -9,6 +9,7 @@ import Cart from "../pages/Cart";
 import Checkout from "../pages/Checkout";
 import Login from "../pages/Auth/Login";
 import Register from "../pages/Auth/Register";
+import Account from "../pages/Account";
 
 
 export const router = createBrowserRouter([
@@ -51,6 +52,10 @@ export const router = createBrowserRouter([
       {
         path: "Register",
         element: <Register />,
+      },
+      {
+        path: "account",
+        element: <Account />,
       },
     ],
   },
