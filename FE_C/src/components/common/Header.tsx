@@ -30,14 +30,15 @@ const Header = (_props: Props) => {
         setOpenUserMenu(false)
       }
     }
-    document.addEventListener("mousedown", handleClickOutside)
-    return () => document.removeEventListener("mousedown", handleClickOutside)
+    document.addEventListener("click", handleClickOutside)
+    return () => document.removeEventListener("click", handleClickOutside)
   }, [])
 
   const handleLogout = () => {
     localStorage.removeItem("accessToken")
     localStorage.removeItem("user")
     setUser(null)
+    setOpenUserMenu(false)
     nav("/login")
   }
 
@@ -108,19 +109,21 @@ const Header = (_props: Props) => {
                       </div>
                       <Link
                         to="/account"
+                        onClick={() => setOpenUserMenu(false)}
                         className="block px-5 py-3 text-gray-700 hover:bg-purple-50 hover:text-[#51348f] transition-colors duration-200 border-b border-gray-100"
                       >
                         Tài khoản
                       </Link>
                       <Link
                         to="/order"
+                        onClick={() => setOpenUserMenu(false)}
                         className="block px-5 py-3 text-gray-700 hover:bg-purple-50 hover:text-[#51348f] transition-colors duration-200 border-b border-gray-100"
                       >
                         Đơn hàng của tôi
                       </Link>
                       <button
                         onClick={handleLogout}
-                        className="block w-full text-left px-5 py-3 text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors duration-200"
+                        className="block w-full text-left px-5 py-3 bg-white text-gray-700 hover:bg-purple-50 hover:text-[#51348f] border-b border-gray-100 hover:border-white transition-colors duration-200"
                       >
                         Đăng xuất
                       </button>
@@ -129,12 +132,14 @@ const Header = (_props: Props) => {
                     <>
                       <Link
                         to="/login"
+                        onClick={() => setOpenUserMenu(false)}
                         className="block px-5 py-3 text-gray-700 hover:bg-purple-50 hover:text-[#51348f] transition-colors duration-200 border-b border-gray-100"
                       >
                         Đăng nhập
                       </Link>
                       <Link
                         to="/register"
+                        onClick={() => setOpenUserMenu(false)}
                         className="block px-5 py-3 text-gray-700 hover:bg-purple-50 hover:text-[#51348f] transition-colors duration-200"
                       >
                         Đăng ký
