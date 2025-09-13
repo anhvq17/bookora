@@ -208,7 +208,7 @@ const ProductDetails = () => {
       </div>
 
       <div className="mt-12">
-        <h3 className="text-xl font-semibold mb-4">Đánh giá</h3>
+        <h3 className="text-xl font-semibold mb-4">Đánh giá từ người dùng</h3>
         <div className="border p-4 rounded mb-4">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
