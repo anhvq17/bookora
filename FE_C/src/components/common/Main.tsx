@@ -164,7 +164,7 @@ const BookCarousel: React.FC = () => {
 
                     <div>
                         <img
-                            src="https://placehold.co/600x400/EEE6FA/5C2D91?text=Map"
+                            src="map.png"
                             alt="Map"
                             className="w-full h-auto rounded shadow"
                             onError={(e) => {
