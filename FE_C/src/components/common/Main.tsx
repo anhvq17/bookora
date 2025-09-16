@@ -19,7 +19,7 @@ const ProductCard = ({ product }: { product: Product }) => {
 
   return (
     <Link to={`/productdetails/${product._id}`} className="block group">
-      <div className="bg-white rounded-2xl shadow-sm hover:shadow-2xl border border-gray-100 overflow-hidden transition-all duration-300 hover:-translate-y-1 group-hover:border-blue-200">
+      <div className="bg-white rounded-2xl shadow-sm hover:shadow-2xl border border-gray-100 overflow-hidden transition-all duration-300 hover:-translate-y-1">
         <div className="relative overflow-hidden bg-gray-50">
           <img
             src={product.imageUrl || "/placeholder.svg"}
@@ -75,13 +75,7 @@ const ProductCard = ({ product }: { product: Product }) => {
         </div>
 
         <div className="p-4">
-          <div className="mb-2">
-            <span className="text-xs text-blue-600 font-medium bg-blue-50 px-2 py-1 rounded-full">
-              {product.category || "Sách"}
-            </span>
-          </div>
-
-          <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 text-sm leading-5 group-hover:text-blue-600 transition-colors duration-200">
+          <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 text-sm leading-5 group-hover:text-[#4f0f87] transition-colors duration-200">
             {product.name}
           </h3>
 
@@ -94,9 +88,9 @@ const ProductCard = ({ product }: { product: Product }) => {
           <div className="mb-3">
             <div className="flex items-center space-x-2">
               <span className="text-lg font-bold text-red-500">
-                ₫{((product.price * (100 - discountPercent)) / 100).toLocaleString()}
+                {((product.price * (100 - discountPercent)) / 100).toLocaleString()}
               </span>
-              <span className="text-sm text-gray-400 line-through">₫{product.price.toLocaleString()}</span>
+              <span className="text-sm text-gray-400 line-through">{product.price.toLocaleString()}</span>
             </div>
           </div>
 
@@ -113,11 +107,11 @@ const ProductCard = ({ product }: { product: Product }) => {
             className={`w-full py-2.5 px-4 rounded-lg font-medium text-sm transition-all duration-200 ${
               isOutOfStock
                 ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                : "bg-blue-500 hover:bg-blue-600 text-white shadow-sm hover:shadow-md transform hover:scale-[1.02]"
+                : "bg-[#4f0f87] hover:bg-[#581b8d] hover:border-[#581b8d] text-white shadow-sm hover:shadow-md transform hover:scale-[1.02]"
             }`}
             disabled={isOutOfStock}
           >
-            {isOutOfStock ? "Hết hàng" : "Thêm vào giỏ"}
+            {isOutOfStock ? "Hết hàng" : "Thêm vào giỏ hàng"}
           </button>
         </div>
       </div>
@@ -150,7 +144,7 @@ const BookCarousel: React.FC = () => {
   }, [])
 
   return (
-    <div className="max-w-7xl mx-auto py-10 px-4 space-y-16">
+    <div className="max-w-7xl mx-auto py-4 px-4 space-y-16">
       <section className="bg-white py-12 px-4">
         <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-8 items-center">
           <div className="space-y-4 md:text-left">
@@ -177,7 +171,7 @@ const BookCarousel: React.FC = () => {
         </div>
       </section>
 
-      <section className="bg-gradient-to-br from-gray-50 to-white py-12 px-6 rounded-2xl">
+      <section className="px-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 space-y-4 sm:space-y-0">
           <div>
             <h2 className="text-3xl font-bold text-gray-900 mb-2">Tủ sách nổi bật của chúng tôi</h2>
@@ -185,10 +179,10 @@ const BookCarousel: React.FC = () => {
           </div>
           <Link
             to={"/products"}
-            className="inline-flex items-center space-x-2 bg-white hover:bg-purple-50 text-purple-700 font-medium px-6 py-3 rounded-full border border-purple-200 hover:border-purple-300 transition-all duration-200 shadow-sm hover:shadow-md"
+            className="inline-flex items-center space-x-2 bg-[#4f0f87] hover:bg-[#51348f] text-white hover:text-white font-medium px-6 py-3 rounded-full border border-purple-200 hover:border-purple-300 transition-all duration-200 shadow-sm hover:shadow-md"
           >
             <span>Xem tất cả</span>
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
           </Link>
@@ -204,20 +198,6 @@ const BookCarousel: React.FC = () => {
             {products.slice(0, 8).map((product) => (
               <ProductCard key={product._id} product={product} />
             ))}
-          </div>
-        )}
-
-        {!loading && products.length > 8 && (
-          <div className="text-center mt-12">
-            <Link
-              to="/products"
-              className="inline-flex items-center space-x-2 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-medium px-8 py-4 rounded-full transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl"
-            >
-              <span>Khám phá thêm {products.length - 8} sản phẩm khác</span>
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-              </svg>
-            </Link>
           </div>
         )}
       </section>
