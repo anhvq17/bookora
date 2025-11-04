@@ -16,3 +16,13 @@ export const {
   RESET_PASSWORD_EXPIRES,
   FRONTEND_URL,
 } = process.env;
+
+// Validate required environment variables
+if (!JWT_SECRET) {
+  console.warn("⚠️  WARNING: JWT_SECRET is not set in .env file. Using default (not secure for production)");
+}
+
+if (!DB_URI) {
+  console.error("❌ ERROR: DB_URI is required in .env file");
+  process.exit(1);
+}

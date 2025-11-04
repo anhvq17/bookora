@@ -20,9 +20,15 @@ connectDB();
 
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://localhost:5174"],
+    origin: [
+      "http://localhost:5173", 
+      "http://localhost:5174", 
+      "http://localhost:5175",
+      "http://localhost:3000"
+    ],
     credentials: true,
-    // Them cac cau hinh can thiet
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
@@ -46,13 +52,14 @@ app.use(formatResponseSuccess);
 // Middleware xử lý JSON không hợp lệ
 app.use(jsonValid);
 
-// Middleware xửa lý lỗi chung
-app.use(errorHandler);
 app.use("/", authRoutes);
 app.use("/api", routes);
 
 // Middleware xử lý route không tồn tại
 app.use(notFoundHandler);
+
+// Middleware xử lý lỗi chung - phải đặt cuối cùng
+app.use(errorHandler);
 
 const server = app.listen(PORT, () => {
   console.log(`Server is running on: http://localhost:${PORT}/api`);

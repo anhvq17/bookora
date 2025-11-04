@@ -29,13 +29,48 @@ export const getProductById = async (req, res, next) => {
 // Thêm sản phẩm mới
 export const addProduct = async (req, res, next) => {
 	try {
-		const newProduct = new Product(req.body);
+		console.log('Add product request body:', req.body);
+		
+		// Validate required fields
+		const { name, price, category, imageUrl, stock } = req.body;
+		
+		if (!name || !price || !category || !imageUrl) {
+			return res.status(400).json({
+				success: false,
+				message: "Vui lòng điền đầy đủ thông tin: tên, giá, danh mục, và hình ảnh"
+			});
+		}
+
+		const productData = {
+			name,
+			price: Number(price),
+			category,
+			imageUrl,
+			stock: stock ? Number(stock) : 0,
+			description: req.body.description || '',
+			status: req.body.status || 'Sẵn',
+			variants: req.body.variants || []
+		};
+
+		const newProduct = new Product(productData);
 		await newProduct.save();
 
+		console.log('Product created successfully:', newProduct._id);
+
 		res.status(201).json({
-			success: true, data: newProduct
+			success: true,
+			message: "Thêm sản phẩm thành công",
+			data: newProduct
 		});
 	} catch (error) {
+		console.error('Add product error:', error);
+		if (error.name === 'ValidationError') {
+			return res.status(400).json({
+				success: false,
+				message: "Dữ liệu không hợp lệ",
+				error: error.message
+			});
+		}
 		next(error);
 	}
 };

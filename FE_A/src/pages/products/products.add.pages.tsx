@@ -21,12 +21,38 @@ const ProductsAdd = () => {
 
   const onFinish = async (values: IProducts) => {
     try {
-      await api.post('api/products/add', values)
-      message.success('Thêm sản phẩm thành công!')
-      nav('/products')
-    } catch (err) {
-      console.error(err)
-      message.error('Thêm sản phẩm thất bại!')
+      console.log('Submitting product:', values);
+      
+      // Đảm bảo imageUrl có giá trị
+      if (!values.imageUrl) {
+        message.error('Vui lòng tải lên hình ảnh sản phẩm!');
+        return;
+      }
+
+      const response = await api.post('api/products/add', {
+        name: values.name,
+        price: values.price,
+        category: values.category,
+        imageUrl: values.imageUrl,
+        stock: values.stock || 0,
+        description: values.description || '',
+        status: values.status || 'Sẵn'
+      });
+
+      console.log('Product added successfully:', response.data);
+      message.success(response.data.message || 'Thêm sản phẩm thành công!');
+      nav('/products');
+    } catch (err: any) {
+      console.error('Error adding product:', err);
+      
+      if (err.response) {
+        const errorMessage = err.response.data?.message || err.response.data?.error || 'Thêm sản phẩm thất bại!';
+        message.error(errorMessage);
+      } else if (err.request) {
+        message.error('Không thể kết nối đến server. Vui lòng kiểm tra lại!');
+      } else {
+        message.error('Có lỗi xảy ra. Vui lòng thử lại!');
+      }
     }
   }
   const uploadImage = async (file: File) => {

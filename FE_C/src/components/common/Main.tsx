@@ -1,6 +1,10 @@
 import type React from "react"
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
+import api from "../../configs/axios.customize"
+import { Heart } from "lucide-react"
+import { useWishlist } from "../../hooks/useWishlist"
+import { message } from "antd"
 
 type Product = {
   _id: string
@@ -16,6 +20,44 @@ type Product = {
 const ProductCard = ({ product }: { product: Product }) => {
   const isOutOfStock = product.stock === 0 || product.status === "Hết"
   const discountPercent = Math.floor(Math.random() * 30) + 10
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist()
+  const [isFavorite, setIsFavorite] = useState(false)
+
+  useEffect(() => {
+    setIsFavorite(isInWishlist(product._id))
+  }, [product._id, isInWishlist])
+
+  useEffect(() => {
+    const handleUpdate = () => {
+      setIsFavorite(isInWishlist(product._id))
+    }
+    window.addEventListener('wishlistUpdated', handleUpdate)
+    return () => window.removeEventListener('wishlistUpdated', handleUpdate)
+  }, [product._id, isInWishlist])
+
+  const handleToggleWishlist = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    if (isFavorite) {
+      removeFromWishlist(product._id)
+      message.success('Đã xóa khỏi danh sách yêu thích')
+    } else {
+      const success = addToWishlist({
+        _id: product._id,
+        name: product.name,
+        price: product.price,
+        imageUrl: product.imageUrl,
+        category: product.category,
+        description: product.description,
+        stock: product.stock,
+        status: product.status,
+      })
+      if (success) {
+        message.success('Đã thêm vào danh sách yêu thích')
+      }
+    }
+  }
 
   return (
     <Link to={`/productdetails/${product._id}`} className="block group">
@@ -45,14 +87,14 @@ const ProductCard = ({ product }: { product: Product }) => {
 
           <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <div className="flex flex-col space-y-2">
-              <button className="bg-white/90 hover:bg-white hover:border-white text-gray-700 p-2 rounded-full shadow-md transition-colors">
-                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                  <path
-                    fillRule="evenodd"
-                    d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
-                    clipRule="evenodd"
-                  />
-                </svg>
+              <button
+                onClick={handleToggleWishlist}
+                className={`bg-white/90 hover:bg-white hover:border-white p-2 rounded-full shadow-md transition-colors ${
+                  isFavorite ? 'text-red-500' : 'text-gray-700'
+                }`}
+                title={isFavorite ? 'Xóa khỏi yêu thích' : 'Thêm vào yêu thích'}
+              >
+                <Heart className={`w-4 h-4 ${isFavorite ? 'fill-red-500' : ''}`} />
               </button>
               <button className="bg-white/90 hover:bg-white hover:border-white text-gray-700 p-2 rounded-full shadow-md transition-colors">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -126,16 +168,23 @@ const BookCarousel: React.FC = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await fetch("http://localhost:8888/api/products")
-        const data = await res.json()
+        const res = await api.get("api/products")
+        console.log("Products response:", res.data)
 
-        if (Array.isArray(data.data)) {
-          setProducts(data.data)
+        if (res.data && res.data.data && Array.isArray(res.data.data)) {
+          setProducts(res.data.data)
+        } else if (Array.isArray(res.data)) {
+          setProducts(res.data)
         } else {
-          console.error("Dữ liệu không hợp lệ:", data)
+          console.error("Dữ liệu không hợp lệ:", res.data)
+          setProducts([])
         }
-      } catch (err) {
+      } catch (err: any) {
         console.error("Lỗi khi fetch sản phẩm:", err)
+        if (err.response) {
+          console.error("Response error:", err.response.data)
+        }
+        setProducts([])
       } finally {
         setLoading(false)
       }

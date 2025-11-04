@@ -20,13 +20,33 @@ const Register = () => {
 
   const onFinish = async (values: IRegister) => {
     try {
-      await api.post('api/register', values)
-      message.success('Đăng ký thành công!')
-      const userData = {
+      // Format address: nếu có dấu phẩy thì split, nếu không thì dùng toàn bộ
+      const addressParts = values.address.split(',');
+      const formattedAddress = addressParts.length > 1 
+        ? [
+            {
+              city: addressParts[0]?.trim() || values.address,
+              district: addressParts[1]?.trim() || "Chưa cập nhật",
+              detail: "Chưa cập nhật",
+              default: true
+            }
+          ]
+        : [
+            {
+              city: values.address,
+              district: "Chưa cập nhật",
+              detail: "Chưa cập nhật",
+              default: true
+            }
+          ];
+
+      const payload = {
         ...values,
-        password: btoa(values.password)
-      }
-      console.log(userData)
+        address: formattedAddress
+      };
+
+      await api.post('api/register', payload)
+      message.success('Đăng ký thành công!')
       nav('/login')
     } catch (error:any) {
       if (error.response && error.response.data && error.response.data.message) {

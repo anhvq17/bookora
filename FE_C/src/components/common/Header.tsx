@@ -84,12 +84,12 @@ const Header = (_props: Props) => {
               <ShoppingCart size={20} />
             </Link>
             <div className="w-px h-6 bg-gray-300"></div>
-            <a
-              href="#"
+            <Link
+              to="/wishlist"
               className="hover:text-[#51348f] text-[#4f0f87] transition-all duration-200 hover:scale-110 p-2 rounded-full"
             >
               <Heart size={20} />
-            </a>
+            </Link>
             <div className="w-px h-6 bg-gray-300"></div>
 
             <div className="relative" ref={menuRef}>

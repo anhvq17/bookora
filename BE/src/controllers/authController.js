@@ -10,6 +10,9 @@ import {
 } from "../configs/enviroments.js";
 
 const generateToken = (user) => {
+  if (!JWT_SECRET) {
+    throw new Error("JWT_SECRET is not configured");
+  }
   return jwt.sign(
     {
       userId: user._id,
@@ -35,12 +38,39 @@ register: async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Xử lý address: nếu là string thì convert thành object format
+    let formattedAddress = address;
+    if (typeof address === 'string') {
+      const [city, district] = address.split(',').map(s => s.trim());
+      formattedAddress = [
+        {
+          city: city || address, // Nếu không có dấu phẩy thì dùng toàn bộ string làm city
+          district: district || "Chưa cập nhật",
+          detail: "Chưa cập nhật",
+          default: true
+        }
+      ];
+    } else if (Array.isArray(address) && address.length > 0) {
+      // Nếu đã là array thì giữ nguyên
+      formattedAddress = address;
+    } else {
+      // Nếu không có address hoặc null/undefined, dùng giá trị mặc định
+      formattedAddress = [
+        {
+          city: "Chưa cập nhật",
+          district: "Chưa cập nhật",
+          detail: "Chưa cập nhật",
+          default: true
+        }
+      ];
+    }
+
     const newUser = new User({
       fullname,
       email,
       password: hashedPassword,
       phoneNumber,
-      address,
+      address: formattedAddress,
       role: role === "admin" ? "admin" : "user",
     });
 
@@ -56,7 +86,11 @@ register: async (req, res) => {
       user: newUser.toJSON(), // Đảm bảo có trường id
     });
   } catch (error) {
-    res.status(500).json({ message: "Lỗi server", error });
+    console.error("Register error:", error);
+    res.status(500).json({ 
+      message: "Lỗi server", 
+      error: error.message || "Có lỗi xảy ra khi đăng ký" 
+    });
   }
 },
 
@@ -81,7 +115,11 @@ login: async (req, res) => {
       user: user.toJSON(), // Đảm bảo có trường id
     });
   } catch (error) {
-    res.status(500).json({ message: "Lỗi server", error });
+    console.error("Login error:", error);
+    res.status(500).json({ 
+      message: "Lỗi server", 
+      error: error.message || "Có lỗi xảy ra khi đăng nhập" 
+    });
   }
 },
 // ...existing code...
@@ -119,7 +157,11 @@ login: async (req, res) => {
 
       res.status(200).json({ message: "Link đặt lại mật khẩu đã được gửi qua email" });
     } catch (error) {
-      res.status(500).json({ message: "Lỗi server", error });
+      console.error("Forgot password error:", error);
+      res.status(500).json({ 
+        message: "Lỗi server", 
+        error: error.message || "Có lỗi xảy ra khi gửi email" 
+      });
     }
   },
 
@@ -161,7 +203,11 @@ login: async (req, res) => {
 
       res.json({ message: "Cập nhật thành công", user: updatedUser });
     } catch (error) {
-      res.status(500).json({ message: "Lỗi server", error });
+      console.error("Update user error:", error);
+      res.status(500).json({ 
+        message: "Lỗi server", 
+        error: error.message || "Có lỗi xảy ra khi cập nhật" 
+      });
     }
   },
 
@@ -177,7 +223,11 @@ login: async (req, res) => {
 
       res.json({ message: "Xóa người dùng thành công" });
     } catch (error) {
-      res.status(500).json({ message: "Lỗi server", error });
+      console.error("Delete user error:", error);
+      res.status(500).json({ 
+        message: "Lỗi server", 
+        error: error.message || "Có lỗi xảy ra khi xóa" 
+      });
     }
   },
 
@@ -186,7 +236,11 @@ login: async (req, res) => {
       const users = await User.find().select("-password");
       res.json(users);
     } catch (error) {
-      res.status(500).json({ message: "Lỗi server", error });
+      console.error("Get all users error:", error);
+      res.status(500).json({ 
+        message: "Lỗi server", 
+        error: error.message || "Có lỗi xảy ra khi lấy danh sách người dùng" 
+      });
     }
   },
 
@@ -202,7 +256,11 @@ login: async (req, res) => {
 
       res.json(user);
     } catch (error) {
-      res.status(500).json({ message: "Lỗi server", error });
+      console.error("Get user by id error:", error);
+      res.status(500).json({ 
+        message: "Lỗi server", 
+        error: error.message || "Có lỗi xảy ra khi lấy thông tin người dùng" 
+      });
     }
   },
 };

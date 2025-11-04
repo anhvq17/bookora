@@ -21,13 +21,14 @@ passport.deserializeUser(async (id, done) => {
 });
 
 // ================== GOOGLE STRATEGY ==================
-passport.use(
-  new GoogleStrategy(
-    {
-      clientID: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "http://localhost:8888/auth/google/callback",
-    },
+if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
+  passport.use(
+    new GoogleStrategy(
+      {
+        clientID: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        callbackURL: "http://localhost:8888/auth/google/callback",
+      },
     async (accessToken, refreshToken, profile, done) => {
       try {
         const email = profile.emails?.[0]?.value || "";
@@ -57,19 +58,21 @@ passport.use(
         return done(err, null);
       }
     }
-  )
-);
+    )
+  );
+}
 
 // // ================== FACEBOOK STRATEGY ==================
 // ================== FACEBOOK STRATEGY ==================
-passport.use(
-  new FacebookStrategy(
-    {
-      clientID: process.env.FACEBOOK_CLIENT_ID,
-      clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
-      callbackURL: "http://localhost:8888/auth/facebook/callback",
-      profileFields: ["id", "displayName", "photos", "email"], // Quan trọng để lấy email
-    },
+if (process.env.FACEBOOK_CLIENT_ID && process.env.FACEBOOK_CLIENT_SECRET) {
+  passport.use(
+    new FacebookStrategy(
+      {
+        clientID: process.env.FACEBOOK_CLIENT_ID,
+        clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+        callbackURL: "http://localhost:8888/auth/facebook/callback",
+        profileFields: ["id", "displayName", "photos", "email"], // Quan trọng để lấy email
+      },
     async (accessToken, refreshToken, profile, done) => {
       try {
         const email = profile.emails?.[0]?.value || "";
@@ -98,18 +101,20 @@ passport.use(
         return done(err, null);
       }
     }
-  )
-);
+    )
+  );
+}
 
 // ================== GITHUB STRATEGY ==================
-passport.use(
-  new GitHubStrategy(
-    {
-      clientID: process.env.GITHUB_CLIENT_ID,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET,
-      callbackURL: "http://localhost:8888/auth/github/callback",
-      scope: ["user:email"],
-    },
+if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {
+  passport.use(
+    new GitHubStrategy(
+      {
+        clientID: process.env.GITHUB_CLIENT_ID,
+        clientSecret: process.env.GITHUB_CLIENT_SECRET,
+        callbackURL: "http://localhost:8888/auth/github/callback",
+        scope: ["user:email"],
+      },
     async (accessToken, refreshToken, profile, done) => {
       try {
         const githubId = profile.id;
@@ -142,7 +147,8 @@ passport.use(
         done(err, null);
       }
     }
-  )
-);
+    )
+  );
+}
 
 

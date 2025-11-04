@@ -10,9 +10,10 @@ import {
 // Đổi tên biến thành productRoutes để tránh trùng
 const productRoutes = Router();
 
+// QUAN TRỌNG: Route "/add" phải đặt TRƯỚC route "/:id" để tránh conflict
 productRoutes.get("/", getAllProducts);
-productRoutes.get("/:id", getProductById);
 productRoutes.post("/add", addProduct);
+productRoutes.get("/:id", getProductById);
 productRoutes.put("/:id", updateProduct);
 productRoutes.delete("/:id", deleteProduct);
 

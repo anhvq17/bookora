@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import api from '../../configs/axios.customize';
+import { Heart } from 'lucide-react';
+import { useWishlist } from '../../hooks/useWishlist';
+import { message } from 'antd';
 
 type Product = {
   _id: string;
@@ -16,19 +20,70 @@ const categories = ['Tiểu thuyết', 'Ngôn tình', 'Trinh thám', 'Huyền B�
 
 const ProductCard = ({ product }: { product: Product }) => {
   const isOutOfStock = product.stock === 0 || product.status === 'Hết';
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
+  const [isFavorite, setIsFavorite] = useState(false);
+
+  useEffect(() => {
+    setIsFavorite(isInWishlist(product._id));
+  }, [product._id, isInWishlist]);
+
+  useEffect(() => {
+    const handleUpdate = () => {
+      setIsFavorite(isInWishlist(product._id));
+    };
+    window.addEventListener('wishlistUpdated', handleUpdate);
+    return () => window.removeEventListener('wishlistUpdated', handleUpdate);
+  }, [product._id, isInWishlist]);
+
+  const handleToggleWishlist = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (isFavorite) {
+      removeFromWishlist(product._id);
+      message.success('Đã xóa khỏi danh sách yêu thích');
+    } else {
+      const success = addToWishlist({
+        _id: product._id,
+        name: product.name,
+        price: product.price,
+        imageUrl: product.imageUrl,
+        category: product.category,
+        description: product.description,
+        stock: product.stock,
+        status: product.status,
+      });
+      if (success) {
+        message.success('Đã thêm vào danh sách yêu thích');
+      }
+    }
+  };
 
   return (
-    <Link to={`/productdetails/${product._id}`} className="block">
-      <div className="bg-white border rounded-lg shadow-sm hover:shadow-md p-4 flex flex-col justify-between h-full transition hover:-translate-y-1">
-        <img
-          src={product.imageUrl}
-          alt={product.name}
-          className="h-60 w-full object-cover rounded mb-4"
-          onError={(e) => {
-            e.currentTarget.onerror = null;
-            e.currentTarget.src = 'https://placehold.co/200x300?text=No+Image';
-          }}
-        />
+    <Link to={`/productdetails/${product._id}`} className="block group">
+      <div className="bg-white border rounded-lg shadow-sm hover:shadow-md p-4 flex flex-col justify-between h-full transition hover:-translate-y-1 relative">
+        <div className="relative">
+          <img
+            src={product.imageUrl}
+            alt={product.name}
+            className="h-60 w-full object-cover rounded mb-4"
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = 'https://placehold.co/200x300?text=No+Image';
+            }}
+          />
+          <button
+            onClick={handleToggleWishlist}
+            className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-lg hover:bg-red-50 transition-colors z-10"
+            title={isFavorite ? 'Xóa khỏi yêu thích' : 'Thêm vào yêu thích'}
+          >
+            <Heart
+              className={`w-5 h-5 transition-colors ${
+                isFavorite ? 'fill-red-500 text-red-500' : 'text-gray-600'
+              }`}
+            />
+          </button>
+        </div>
         <h3 className="font-semibold text-black mb-3 line-clamp-2">{product.name}</h3>
         <div className="flex justify-between items-center text-sm text-gray-600 mb-3">
           <span className="bg-orange-100 text-orange-700 text-xs px-2 py-0.5 rounded-full">
@@ -66,15 +121,22 @@ const ProductList: React.FC = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await fetch('http://localhost:8888/api/products');
-        const data = await res.json();
-        if (Array.isArray(data.data)) {
-          setProducts(data.data);
+        const res = await api.get('api/products');
+        console.log('Products response:', res.data);
+        if (res.data && res.data.data && Array.isArray(res.data.data)) {
+          setProducts(res.data.data);
+        } else if (Array.isArray(res.data)) {
+          setProducts(res.data);
         } else {
-          console.error('Dữ liệu không hợp lệ:', data);
+          console.error('Dữ liệu không hợp lệ:', res.data);
+          setProducts([]);
         }
-      } catch (err) {
+      } catch (err: any) {
         console.error('Lỗi khi fetch sản phẩm:', err);
+        if (err.response) {
+          console.error('Response error:', err.response.data);
+        }
+        setProducts([]);
       }
     };
     fetchProducts();
