@@ -122,16 +122,16 @@ const Footer = () => {
                   <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center">
                     <Clock className="w-4 h-4" />
                   </div>
-                  <span className="text-sm">08:00 - 16:00</span>
+                  <span className="text-sm">08:30 - 17:30</span>
                 </div>
                 <div className="flex items-center space-x-3">
                   <div className="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center">
                     <Mail className="w-4 h-4" />
                   </div>
-                  <span className="text-sm">bkr@gmail.com</span>
+                  <span className="text-sm">us@bookora.com</span>
                 </div>
                 <div>
-                  <button className="mt-8 w-full bg-white text-[#4f0f87] px-6 py-2 rounded-xl font-medium hover:bg-white/90 transition-all duration-300 flex items-center justify-center space-x-2 group">
+                  <button className="mt-8 w-full bg-white text-[#4f0f87] px-6 py-2 rounded-xl font-medium hover:bg-white/90 hover:border-[#4f0f87] transition-all duration-300 flex items-center justify-center space-x-2 group">
                     <span>Liên hệ ngay</span>
                     <ArrowRight className="mt-1 w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
                   </button>

@@ -24,7 +24,7 @@ const ProductCard = ({ product }: { product: Product }) => {
           <img
             src={product.imageUrl || "/placeholder.svg"}
             alt={product.name}
-            className="h-56 w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            className="h-96 w-full object-cover transition-transform duration-500 group-hover:scale-105"
             onError={(e) => {
               e.currentTarget.onerror = null
               e.currentTarget.src = "https://placehold.co/300x300?text=No+Image"
@@ -45,7 +45,7 @@ const ProductCard = ({ product }: { product: Product }) => {
 
           <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <div className="flex flex-col space-y-2">
-              <button className="bg-white/90 hover:bg-white text-gray-700 p-2 rounded-full shadow-md transition-colors">
+              <button className="bg-white/90 hover:bg-white hover:border-white text-gray-700 p-2 rounded-full shadow-md transition-colors">
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                   <path
                     fillRule="evenodd"
@@ -54,7 +54,7 @@ const ProductCard = ({ product }: { product: Product }) => {
                   />
                 </svg>
               </button>
-              <button className="bg-white/90 hover:bg-white text-gray-700 p-2 rounded-full shadow-md transition-colors">
+              <button className="bg-white/90 hover:bg-white hover:border-white text-gray-700 p-2 rounded-full shadow-md transition-colors">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
@@ -160,8 +160,8 @@ const BookCarousel: React.FC = () => {
               hơn 40 ngôn ngữ...
             </p>
 
-            <button className="bg-[#4f0f87] hover:bg-[#51348f] text-white px-5 py-2 rounded-xl transition md:ml-0 md:mr-auto block">
-              Xem ngay
+            <button className="inline-flex items-center space-x-2 bg-[#4f0f87] hover:bg-[#51348f] text-white hover:text-white font-medium px-4 py-2 rounded-xl border border-purple-200 hover:border-purple-300 transition-all duration-200 shadow-sm hover:shadow-md">
+              Xem thêm
             </button>
           </div>
 
@@ -179,9 +179,9 @@ const BookCarousel: React.FC = () => {
           </div>
           <Link
             to={"/products"}
-            className="inline-flex items-center space-x-2 bg-[#4f0f87] hover:bg-[#51348f] text-white hover:text-white font-medium px-6 py-3 rounded-full border border-purple-200 hover:border-purple-300 transition-all duration-200 shadow-sm hover:shadow-md"
+            className="inline-flex items-center space-x-2 bg-[#4f0f87] hover:bg-[#51348f] text-white hover:text-white font-medium px-4 py-2 rounded-xl border border-purple-200 hover:border-purple-300 transition-all duration-200 shadow-sm hover:shadow-md"
           >
-            <span>Xem tất cả</span>
+            <span>Xem thêm</span>
             <svg className="w-4 h-4 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
@@ -205,15 +205,14 @@ const BookCarousel: React.FC = () => {
       <section>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
           <div>
-            <h2 className="text-2xl font-bold mb-4">Bạn có biết về chúng tôi không?</h2>
+            <h2 className="text-2xl font-bold mb-4">Bookora - Từ trang sách đến tâm hồn!</h2>
             <p className="text-gray-600 mb-4">
-              Chúng tôi là Bookora - chuyên về sách trực tuyến và mục tiêu của chúng tôi là mang đến những cuốn sách có
-              thể thay đổi cuộc sống của bạn hoặc đưa bạn thoát khỏi thế giới thực để bước vào một thế giới tuyệt vời
-              hơn. Bookora tự hào được hợp tác với những nhà xuất bản nổi tiếng nhất để mang lại trải nghiệm tốt nhất
-              cho bạn.
+              Chúng tôi tin rằng, mỗi cuốn sách đều có thể chạm đến trái tim người đọc và mở ra những góc nhìn mới mẻ hơn về cuộc sống.
+              Chính vì vậy, Bookora ra đời nhằm kết nối bạn với những cuốn sách, những câu chuyện khiến bạn mỉm cười, suy ngẫm
+              hoặc đơn giản là tìm thấy chính mình ở trong đó!
               <br />
               <br />
-              Nếu bạn yêu thích sách, hãy đăng ký nhận bản tin của chúng tôi!
+              Nếu bạn yêu thích sách, hãy đăng ký ngay để nhận bản tin của chúng tôi!
             </p>
             <form className="space-y-4">
               <input
