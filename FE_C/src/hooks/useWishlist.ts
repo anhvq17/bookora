@@ -10,7 +10,6 @@ export const useWishlist = () => {
       try {
         setWishlist(JSON.parse(stored));
       } catch (error) {
-        console.error('Error parsing wishlist:', error);
         setWishlist([]);
       }
     }
@@ -20,7 +19,6 @@ export const useWishlist = () => {
     const stored = localStorage.getItem('wishlist');
     let currentWishlist: WishlistProduct[] = stored ? JSON.parse(stored) : [];
 
-    // Kiểm tra xem sản phẩm đã có trong wishlist chưa
     const exists = currentWishlist.some(item => item._id === product._id);
     if (!exists) {
       currentWishlist.push(product);

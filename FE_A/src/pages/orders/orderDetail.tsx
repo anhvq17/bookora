@@ -23,7 +23,7 @@ import {
 const { Title } = Typography;
 
 const formatCurrency = (value?: number) =>
-  typeof value === 'number' ? `${value.toLocaleString()} ₫` : 'N/A';
+  typeof value === 'number' ? `${value.toLocaleString()}` : 'N/A';
 
 const formatFullAddress = (
   address?: IOrder['address'],
@@ -108,7 +108,7 @@ console.log('Địa chỉ trả về từ API:', order.address);
   const discount =
     typeof order.discount_id === 'object' && order.discount_id
       ? `${order.discount_id.code} - ${order.discount_id.value}${
-          order.discount_id.type === 'percent' ? '%' : ' ₫'
+          order.discount_id.type === 'percent' ? '%' : ''
         }`
       : 'Không áp dụng';
 

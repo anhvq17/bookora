@@ -3,7 +3,7 @@ import { Facebook, Instagram, Twitter, Phone, Clock, Mail, ArrowRight } from "lu
 const Footer = () => {
   return (
     <footer className="bg-[#4f0f87] text-white">
-      <div className="px-6 md:px-16 py-12">
+      <div className="px-6 md:px-16 py-12 max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
           <div className="lg:col-span-3 space-y-6">
             <div>
@@ -142,7 +142,7 @@ const Footer = () => {
         </div>
       </div>
 
-      <div className="border-t border-white/20 px-6 md:px-16 py-6">
+      <div className="border-t border-white/20 px-6 md:px-16 py-6 max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
           <div className="text-sm text-white/60">Copyright 2025 © by wkkkuu. All rights reserved.</div>
           <div className="space-y-3">

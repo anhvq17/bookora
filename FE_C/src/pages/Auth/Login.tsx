@@ -3,7 +3,6 @@ import type { ILogin } from '../../types/auth'
 import { Link, useNavigate } from 'react-router'
 import api from '../../configs/axios.customize'
 
-
 const Login = () => {
   const nav = useNavigate()
   const [form] = Form.useForm()
@@ -37,10 +36,8 @@ const Login = () => {
     } catch (error: any) {
       if (error.response && error.response.data && error.response.data.message) {
         message.error(error.response.data.message)
-        console.log('Lỗi đăng nhập:', error.response.data.message)
       } else {
         message.error('Đăng nhập thất bại!')
-        console.log(error)
       }
     }
   }

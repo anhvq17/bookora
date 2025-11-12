@@ -4,7 +4,17 @@ import mongoose from "mongoose";
 // Lấy tất cả sản phẩm
 export const getAllProducts = async (req, res, next) => {
 	try {
-		const products = await Product.find();
+		const { search } = req.query;
+
+		// Nếu có tham số search: lọc theo tên (chứa, không phân biệt hoa thường)
+		let query = {};
+		if (typeof search === "string" && search.trim() !== "") {
+			query = {
+				name: { $regex: search.trim(), $options: "i" }
+			};
+		}
+
+		const products = await Product.find(query);
 		res.json({ success: true, data: products });
 	} catch (error) {
 		next(error);
@@ -29,9 +39,6 @@ export const getProductById = async (req, res, next) => {
 // Thêm sản phẩm mới
 export const addProduct = async (req, res, next) => {
 	try {
-		console.log('Add product request body:', req.body);
-		
-		// Validate required fields
 		const { name, price, category, imageUrl, stock } = req.body;
 		
 		if (!name || !price || !category || !imageUrl) {
@@ -46,16 +53,24 @@ export const addProduct = async (req, res, next) => {
 			price: Number(price),
 			category,
 			imageUrl,
+			images: req.body.images || [],
 			stock: stock ? Number(stock) : 0,
 			description: req.body.description || '',
 			status: req.body.status || 'Sẵn',
+			discountPercent: req.body.discountPercent || 0,
+			rating: req.body.rating || 0,
+			reviews: req.body.reviews || [],
+			publisher: req.body.publisher || '',
+			releaseDate: req.body.releaseDate || null,
+			language: req.body.language || '',
+			pages: req.body.pages || null,
+			age: req.body.age || '',
+			dimensions: req.body.dimensions || '',
 			variants: req.body.variants || []
 		};
 
 		const newProduct = new Product(productData);
 		await newProduct.save();
-
-		console.log('Product created successfully:', newProduct._id);
 
 		res.status(201).json({
 			success: true,
@@ -63,7 +78,6 @@ export const addProduct = async (req, res, next) => {
 			data: newProduct
 		});
 	} catch (error) {
-		console.error('Add product error:', error);
 		if (error.name === 'ValidationError') {
 			return res.status(400).json({
 				success: false,

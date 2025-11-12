@@ -40,7 +40,6 @@ const Checkout: React.FC = () => {
       try {
         setCart(JSON.parse(cartRaw));
       } catch (err) {
-        console.error("Lỗi parse cart:", err);
       }
     }
 
@@ -54,17 +53,14 @@ const Checkout: React.FC = () => {
           phone: user.phoneNumber || "",
         }));
       } catch (err) {
-        console.error("Lỗi parse user:", err);
       }
     }
 
-    // ✅ Đọc shipping info đã lưu nếu có
     const shippingRaw = localStorage.getItem("shippingInfo");
     if (shippingRaw) {
       try {
         setShipping(JSON.parse(shippingRaw));
       } catch (err) {
-        console.error("Lỗi parse shipping info:", err);
       }
     }
   }, []);
@@ -89,7 +85,6 @@ const Checkout: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // ✅ Kiểm tra thông tin đầy đủ
     if (
       !shipping.name ||
       !shipping.phone ||
@@ -101,7 +96,6 @@ const Checkout: React.FC = () => {
       return;
     }
 
-    // ✅ Lưu thông tin vào localStorage
     localStorage.setItem("shippingInfo", JSON.stringify(shipping));
 
     alert("Đã lưu thông tin giao hàng!");
@@ -207,7 +201,7 @@ const Checkout: React.FC = () => {
                 </div>
               </div>
               <span className="font-semibold text-right">
-                {(item.price * item.quantity).toLocaleString("vi-VN")}₫
+                {(item.price * item.quantity).toLocaleString("vi-VN")}
               </span>
             </div>
           ))}
@@ -215,7 +209,7 @@ const Checkout: React.FC = () => {
           <hr className="my-4" />
           <div className="flex justify-between font-semibold">
             <span>Thành tiền</span>
-            <span>{subtotal.toLocaleString("vi-VN")}₫</span>
+            <span>{subtotal.toLocaleString("vi-VN")}</span>
           </div>
           <div className="flex justify-between">
             <span>Phí vận chuyển</span>
@@ -224,7 +218,7 @@ const Checkout: React.FC = () => {
           <hr className="my-4" />
           <div className="flex justify-between text-xl text-red-500 font-bold">
             <span>Tổng tiền</span>
-            <span>{total.toLocaleString("vi-VN")}₫</span>
+            <span>{total.toLocaleString("vi-VN")}</span>
           </div>
         </div>
       </div>

@@ -25,7 +25,7 @@ export const getVariantsColums = (queryClient: any, Del: (id:string) => void)=>[
       title: 'Giá',
       dataIndex: 'price',
       key: 'price',
-      render: (value: number) => value.toLocaleString('vi-VN') + '₫'
+      render: (value: number) => value.toLocaleString('vi-VN')
     },
     {
       title: 'Tồn kho',

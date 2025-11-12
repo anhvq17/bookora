@@ -31,7 +31,6 @@ const fetchOrders = async (): Promise<IOrder[]> => {
       Authorization: `Bearer ${token}`,
     },
   })
-  console.log(res);
   
   return res.data?.data || res.data || []
 }

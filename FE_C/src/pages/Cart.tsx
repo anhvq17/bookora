@@ -48,7 +48,6 @@ const Cart = () => {
         setCart(parsedCart)
         setSelectedIds([])
       } catch (err) {
-        console.error("Lỗi parse localStorage:", err)
       }
     }
 
@@ -56,7 +55,6 @@ const Cart = () => {
       try {
         setShippingInfo(JSON.parse(shippingRaw))
       } catch (err) {
-        console.error("Lỗi parse shipping info:", err)
       }
     }
 
@@ -143,7 +141,6 @@ const Cart = () => {
       localStorage.setItem("cart", JSON.stringify(remaining))
       navigate("/order")
     } catch (error: any) {
-      console.error("Lỗi đặt hàng:", error)
       alert(error?.response?.data?.message || "Đặt hàng thất bại. Vui lòng thử lại.")
     }
   }

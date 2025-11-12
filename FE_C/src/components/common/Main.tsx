@@ -15,11 +15,13 @@ type Product = {
   imageUrl: string
   stock: number
   status?: string
+  discountPercent?: number
+  rating?: number
 }
 
 const ProductCard = ({ product }: { product: Product }) => {
   const isOutOfStock = product.stock === 0 || product.status === "Hết"
-  const discountPercent = Math.floor(Math.random() * 30) + 10
+  const discountPercent = product.discountPercent || 0
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist()
   const [isFavorite, setIsFavorite] = useState(false)
 
@@ -73,11 +75,13 @@ const ProductCard = ({ product }: { product: Product }) => {
             }}
           />
 
-          <div className="absolute top-3 left-3">
-            <span className="bg-red-500 text-white text-xs font-bold px-2.5 py-1 rounded-md shadow-sm">
-              -{discountPercent}%
-            </span>
-          </div>
+          {discountPercent > 0 && (
+            <div className="absolute top-3 left-3">
+              <span className="bg-red-500 text-white text-xs font-bold px-2.5 py-1 rounded-md shadow-sm">
+                -{discountPercent}%
+              </span>
+            </div>
+          )}
 
           {isOutOfStock && (
             <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
@@ -122,17 +126,24 @@ const ProductCard = ({ product }: { product: Product }) => {
           </h3>
 
           <div className="flex items-center mb-3">
-            <div className="flex text-yellow-400 text-sm">{"★".repeat(5)}</div>
-            <span className="text-xs text-gray-500 ml-1">(4.8)</span>
-            <span className="text-xs text-gray-400 ml-2">Đã bán 1.2k</span>
+            <div className="flex text-yellow-400 text-sm">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <span key={star}>{star <= Math.round(product.rating || 0) ? '★' : '☆'}</span>
+              ))}
+            </div>
+            <span className="text-xs text-gray-500 ml-1">({(product.rating || 0).toFixed(1)})</span>
           </div>
 
           <div className="mb-3">
             <div className="flex items-center space-x-2">
               <span className="text-lg font-bold text-red-500">
-                {((product.price * (100 - discountPercent)) / 100).toLocaleString()}
+                {discountPercent > 0
+                  ? ((product.price * (100 - discountPercent)) / 100).toLocaleString()
+                  : product.price.toLocaleString()}
               </span>
-              <span className="text-sm text-gray-400 line-through">{product.price.toLocaleString()}</span>
+              {discountPercent > 0 && (
+                <span className="text-sm text-gray-400 line-through">{product.price.toLocaleString()}</span>
+              )}
             </div>
           </div>
 
@@ -169,21 +180,15 @@ const BookCarousel: React.FC = () => {
     const fetchProducts = async () => {
       try {
         const res = await api.get("api/products")
-        console.log("Products response:", res.data)
 
         if (res.data && res.data.data && Array.isArray(res.data.data)) {
           setProducts(res.data.data)
         } else if (Array.isArray(res.data)) {
           setProducts(res.data)
         } else {
-          console.error("Dữ liệu không hợp lệ:", res.data)
           setProducts([])
         }
       } catch (err: any) {
-        console.error("Lỗi khi fetch sản phẩm:", err)
-        if (err.response) {
-          console.error("Response error:", err.response.data)
-        }
         setProducts([])
       } finally {
         setLoading(false)

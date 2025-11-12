@@ -11,6 +11,7 @@ import Login from "../pages/Auth/Login";
 import Register from "../pages/Auth/Register";
 import Account from "../pages/Account";
 import Wishlist from "../pages/Wishlist";
+import SearchResults from "../pages/SearchResults";
 
 
 export const router = createBrowserRouter([
@@ -61,6 +62,10 @@ export const router = createBrowserRouter([
       {
         path: "wishlist",
         element: <Wishlist />,
+      },
+      {
+        path: "search",
+        element: <SearchResults />,
       },
     ],
   },

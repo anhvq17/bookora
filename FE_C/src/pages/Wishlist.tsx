@@ -6,8 +6,8 @@ import type { WishlistProduct } from '../types/wishlist';
 import { message } from 'antd';
 
 const Wishlist = () => {
-  const { wishlist, removeFromWishlist, clearWishlist } = useWishlist();
-  const [wishlistItems, setWishlistItems] = useState<WishlistProduct[]>([]);
+  const { removeFromWishlist, clearWishlist } = useWishlist();
+  const [ wishlistItems, setWishlistItems] = useState<WishlistProduct[]>([]);
 
   useEffect(() => {
     const stored = localStorage.getItem('wishlist');
@@ -15,7 +15,6 @@ const Wishlist = () => {
       try {
         setWishlistItems(JSON.parse(stored));
       } catch (error) {
-        console.error('Error parsing wishlist:', error);
       }
     }
 
@@ -25,7 +24,6 @@ const Wishlist = () => {
         try {
           setWishlistItems(JSON.parse(stored));
         } catch (error) {
-          console.error('Error parsing wishlist:', error);
         }
       }
     };
@@ -72,7 +70,7 @@ const Wishlist = () => {
             <p className="text-gray-600 mb-8">Bạn chưa có sản phẩm nào trong danh sách yêu thích</p>
             <Link
               to="/products"
-              className="inline-block bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold py-3 px-8 rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all shadow-lg hover:shadow-xl"
+              className="inline-block bg-black text-white font-semibold py-3 px-8 rounded-xl shadow-lg hover:shadow-xl"
             >
               Khám phá sản phẩm
             </Link>
@@ -138,7 +136,7 @@ const Wishlist = () => {
                     {product.category || 'Sách'}
                   </span>
                   <span className="font-bold text-red-500 text-lg">
-                    {product.price.toLocaleString()}₫
+                    {product.price.toLocaleString()}
                   </span>
                 </div>
 
@@ -168,4 +166,3 @@ const Wishlist = () => {
 };
 
 export default Wishlist;
-

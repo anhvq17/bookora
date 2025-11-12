@@ -5,15 +5,35 @@ import { ShoppingCart, Heart, Share2, Star, Minus, Plus, CheckCircle2, Truck, Sh
 import { useWishlist } from '../../hooks/useWishlist';
 import { message } from 'antd';
 
+interface Review {
+  _id?: string;
+  userId?: string;
+  userName: string;
+  userAvatar?: string;
+  rating: number;
+  comment: string;
+  createdAt?: string;
+}
+
 interface ProductType {
   _id: string;
   name: string;
   imageUrl: string;
+  images?: string[];
   price: number;
   description?: string;
   category?: string;
   stock?: number;
   status?: string;
+  discountPercent?: number;
+  rating?: number;
+  reviews?: Review[];
+  publisher?: string;
+  releaseDate?: string;
+  language?: string;
+  pages?: number;
+  age?: string;
+  dimensions?: string;
 }
 
 const ProductCard = ({ product }: { product: ProductType }) => {
@@ -95,7 +115,7 @@ const ProductCard = ({ product }: { product: ProductType }) => {
             {product.category || 'Không rõ thể loại'}
           </span>
           <span className="font-bold text-red-500 text-lg">
-            {product.price.toLocaleString()}₫
+            {product.price.toLocaleString()}
           </span>
         </div>
         {!isOutOfStock && (
@@ -155,8 +175,7 @@ const ProductDetails = () => {
           const related = res.data.data.filter((p: ProductType) => p._id !== product._id);
           setRelatedProducts(related.slice(0, 4));
         })
-        .catch((err) => {
-          console.error('Lỗi lấy sản phẩm liên quan:', err);
+        .catch(() => {
           setRelatedProducts([]);
         });
     }
@@ -172,8 +191,6 @@ const ProductDetails = () => {
       if (recent.length > 5) recent = recent.slice(0, 5);
       localStorage.setItem('recentProducts', JSON.stringify(recent));
       setRecentProducts(recent);
-      
-      // Check if product is in wishlist
       setIsFavorite(isInWishlist(product._id));
     }
   }, [product, isInWishlist]);
@@ -281,8 +298,17 @@ const ProductDetails = () => {
             <div className="space-y-4">
               {/* Main Image */}
               <div className="relative aspect-square rounded-xl overflow-hidden bg-gray-100 group">
+                {product.discountPercent && product.discountPercent > 0 && (
+                  <div className="absolute top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg z-20">
+                    -{product.discountPercent}%
+                  </div>
+                )}
                 <img
-                  src={product.imageUrl}
+                  src={
+                    product.images && product.images.length > 0
+                      ? product.images[selectedImage] || product.imageUrl
+                      : product.imageUrl
+                  }
                   alt={product.name}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   onError={(e) => {
@@ -291,7 +317,7 @@ const ProductDetails = () => {
                   }}
                 />
                 {isOutOfStock && (
-                  <div className="absolute top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg">
+                  <div className="absolute top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg z-20">
                     Hết hàng
                   </div>
                 )}
@@ -305,23 +331,44 @@ const ProductDetails = () => {
               </div>
               
               {/* Thumbnail Images */}
-              <div className="flex gap-3 overflow-x-auto pb-2">
-                {[0, 1, 2, 3].map((i) => (
+              {product.images && product.images.length > 0 ? (
+                <div className="flex gap-3 overflow-x-auto pb-2">
+                  {product.images.map((img, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setSelectedImage(i)}
+                      className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${
+                        selectedImage === i ? 'border-purple-500 ring-2 ring-purple-200 scale-105' : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
+                      <img
+                        src={img}
+                        alt={`${product.name} ${i + 1}`}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.src = product.imageUrl;
+                        }}
+                      />
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex gap-3 overflow-x-auto pb-2">
                   <button
-                    key={i}
-                    onClick={() => setSelectedImage(i)}
+                    onClick={() => setSelectedImage(0)}
                     className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${
-                      selectedImage === i ? 'border-purple-500 ring-2 ring-purple-200 scale-105' : 'border-gray-200 hover:border-gray-300'
+                      selectedImage === 0 ? 'border-purple-500 ring-2 ring-purple-200 scale-105' : 'border-gray-200 hover:border-gray-300'
                     }`}
                   >
                     <img
                       src={product.imageUrl}
-                      alt={`${product.name} ${i + 1}`}
+                      alt={product.name}
                       className="w-full h-full object-cover"
                     />
                   </button>
-                ))}
-              </div>
+                </div>
+              )}
             </div>
 
             {/* Product Info */}
@@ -344,14 +391,23 @@ const ProductDetails = () => {
                 </h1>
                 <div className="flex items-center gap-2 mb-4">
                   <div className="flex items-center">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <Star
-                        key={star}
-                        className={`w-5 h-5 ${star <= 4 ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
-                      />
-                    ))}
+                    {[1, 2, 3, 4, 5].map((star) => {
+                      const avgRating = product.reviews && product.reviews.length > 0
+                        ? product.reviews.reduce((sum, r) => sum + r.rating, 0) / product.reviews.length
+                        : product.rating || 0;
+                      return (
+                        <Star
+                          key={star}
+                          className={`w-5 h-5 ${star <= Math.round(avgRating) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
+                        />
+                      );
+                    })}
                   </div>
-                  <span className="text-gray-600 text-sm">(4.0) - 128 đánh giá</span>
+                  <span className="text-gray-600 text-sm">
+                    ({product.reviews && product.reviews.length > 0
+                      ? (product.reviews.reduce((sum, r) => sum + r.rating, 0) / product.reviews.length).toFixed(1)
+                      : product.rating?.toFixed(1) || '0.0'}) - {product.reviews?.length || 0} đánh giá
+                  </span>
                 </div>
               </div>
 
@@ -359,14 +415,20 @@ const ProductDetails = () => {
               <div className="border-t border-b border-gray-200 py-6">
                 <div className="flex items-baseline gap-4">
                   <span className="text-4xl font-bold text-red-500">
-                    {product.price.toLocaleString()}₫
+                    {product.discountPercent && product.discountPercent > 0
+                      ? (product.price * (1 - product.discountPercent / 100)).toLocaleString()
+                      : product.price.toLocaleString()}
                   </span>
-                  <span className="text-xl text-gray-400 line-through">
-                    {(product.price * 1.2).toLocaleString()}₫
-                  </span>
-                  <span className="bg-red-100 text-red-600 text-sm font-semibold px-2 py-1 rounded">
-                    -17%
-                  </span>
+                  {product.discountPercent && product.discountPercent > 0 && (
+                    <>
+                      <span className="text-xl text-gray-400 line-through">
+                        {product.price.toLocaleString()}
+                      </span>
+                      <span className="bg-red-100 text-red-600 text-sm font-semibold px-2 py-1 rounded">
+                        -{product.discountPercent}%
+                      </span>
+                    </>
+                  )}
                 </div>
               </div>
 
@@ -475,14 +537,26 @@ const ProductDetails = () => {
                 <h3 className="font-semibold text-gray-900 mb-4">Thông tin chi tiết</h3>
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
-                    <p className="text-gray-600 mb-1"><span className="font-semibold text-gray-900">Nhà xuất bản:</span> Bookora</p>
-                    <p className="text-gray-600 mb-1"><span className="font-semibold text-gray-900">Ngôn ngữ:</span> Tiếng Việt</p>
-                    <p className="text-gray-600"><span className="font-semibold text-gray-900">Số trang:</span> 250</p>
+                    <p className="text-gray-600 mb-1">
+                      <span className="font-semibold text-gray-900">Nhà xuất bản:</span> {product.publisher || 'Chưa cập nhật'}
+                    </p>
+                    <p className="text-gray-600 mb-1">
+                      <span className="font-semibold text-gray-900">Ngôn ngữ:</span> {product.language || 'Chưa cập nhật'}
+                    </p>
+                    <p className="text-gray-600">
+                      <span className="font-semibold text-gray-900">Số trang:</span> {product.pages || 'Chưa cập nhật'}
+                    </p>
                   </div>
                   <div>
-                    <p className="text-gray-600 mb-1"><span className="font-semibold text-gray-900">Ngày phát hành:</span> 2025</p>
-                    <p className="text-gray-600 mb-1"><span className="font-semibold text-gray-900">Độ tuổi:</span> 14+</p>
-                    <p className="text-gray-600"><span className="font-semibold text-gray-900">Kích thước:</span> 14 × 20 cm</p>
+                    <p className="text-gray-600 mb-1">
+                      <span className="font-semibold text-gray-900">Ngày phát hành:</span> {product.releaseDate ? new Date(product.releaseDate).getFullYear() : 'Chưa cập nhật'}
+                    </p>
+                    <p className="text-gray-600 mb-1">
+                      <span className="font-semibold text-gray-900">Độ tuổi:</span> {product.age || 'Chưa cập nhật'}
+                    </p>
+                    <p className="text-gray-600">
+                      <span className="font-semibold text-gray-900">Kích thước:</span> {product.dimensions || 'Chưa cập nhật'}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -500,67 +574,97 @@ const ProductDetails = () => {
           </div>
           
           {/* Rating Summary */}
-          <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 mb-6">
-            <div className="flex items-center justify-between">
-              <div className="text-center">
-                <div className="text-5xl font-bold text-gray-900 mb-2">4.0</div>
-                <div className="flex items-center justify-center mb-2">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <Star
-                      key={star}
-                      className={`w-5 h-5 ${star <= 4 ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
-                    />
-                  ))}
-                </div>
-                <p className="text-sm text-gray-600">128 đánh giá</p>
-              </div>
-              <div className="flex-1 max-w-md space-y-2">
-                {[5, 4, 3, 2, 1].map((rating) => (
-                  <div key={rating} className="flex items-center gap-3">
-                    <span className="text-sm text-gray-600 w-8">{rating} sao</span>
-                    <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-gradient-to-r from-yellow-400 to-yellow-500"
-                        style={{ width: `${rating === 5 ? 60 : rating === 4 ? 25 : rating === 3 ? 10 : rating === 2 ? 3 : 2}%` }}
-                      />
-                    </div>
-                    <span className="text-sm text-gray-600 w-12 text-right">
-                      {rating === 5 ? 60 : rating === 4 ? 25 : rating === 3 ? 10 : rating === 2 ? 3 : 2}%
-                    </span>
+          {product.reviews && product.reviews.length > 0 && (
+            <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 mb-6">
+              <div className="flex items-center justify-between">
+                <div className="text-center">
+                  <div className="text-5xl font-bold text-gray-900 mb-2">
+                    {(() => {
+                      const reviews = product.reviews || [];
+                      return reviews.length > 0
+                        ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
+                        : '0.0';
+                    })()}
                   </div>
-                ))}
+                  <div className="flex items-center justify-center mb-2">
+                    {[1, 2, 3, 4, 5].map((star) => {
+                      const reviews = product.reviews || [];
+                      const avgRating = reviews.length > 0 ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length : 0;
+                      return (
+                        <Star
+                          key={star}
+                          className={`w-5 h-5 ${star <= Math.round(avgRating) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
+                        />
+                      );
+                    })}
+                  </div>
+                  <p className="text-sm text-gray-600">{(product.reviews || []).length} đánh giá</p>
+                </div>
+                <div className="flex-1 max-w-md space-y-2">
+                  {[5, 4, 3, 2, 1].map((rating) => {
+                    const reviews = product.reviews || [];
+                    const count = reviews.filter(r => r.rating === rating).length;
+                    const percentage = reviews.length > 0 ? (count / reviews.length) * 100 : 0;
+                    return (
+                      <div key={rating} className="flex items-center gap-3">
+                        <span className="text-sm text-gray-600 w-8">{rating} sao</span>
+                        <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-gradient-to-r from-yellow-400 to-yellow-500"
+                            style={{ width: `${percentage}%` }}
+                          />
+                        </div>
+                        <span className="text-sm text-gray-600 w-12 text-right">
+                          {Math.round(percentage)}%
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           {/* Reviews List */}
           <div className="space-y-6">
-            {[
-              { name: 'Bác Quýnh', avatar: 'https://i.pravatar.cc/40?img=1', time: '2 giờ trước', rating: 4, comment: 'Tuyệt vời! Nội dung ý nghĩa và rất cuốn. Sách rất hay và bổ ích cho người đọc.' },
-              { name: 'Anh Minh', avatar: 'https://i.pravatar.cc/40?img=2', time: '1 ngày trước', rating: 5, comment: 'Sản phẩm chất lượng tốt, giao hàng nhanh. Rất hài lòng với dịch vụ!' },
-              { name: 'Chị Lan', avatar: 'https://i.pravatar.cc/40?img=3', time: '3 ngày trước', rating: 4, comment: 'Đóng gói cẩn thận, sách mới tinh. Nội dung hay, đáng đọc!' },
-            ].map((review, idx) => (
-              <div key={idx} className="border border-gray-200 rounded-xl p-6 hover:shadow-md transition-shadow">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <img src={review.avatar} alt={review.name} className="w-12 h-12 rounded-full object-cover" />
-                    <div>
-                      <p className="font-semibold text-gray-900">{review.name}</p>
-                      <p className="text-sm text-gray-500">{review.time}</p>
+            {product.reviews && product.reviews.length > 0 ? (
+              product.reviews.map((review, idx) => {
+                const reviewDate = review.createdAt ? new Date(review.createdAt) : new Date();
+                const timeAgo = Math.floor((Date.now() - reviewDate.getTime()) / (1000 * 60 * 60));
+                const timeText = timeAgo < 1 ? 'Vừa xong' : timeAgo < 24 ? `${timeAgo} giờ trước` : `${Math.floor(timeAgo / 24)} ngày trước`;
+                
+                return (
+                  <div key={review._id || idx} className="border border-gray-200 rounded-xl p-6 hover:shadow-md transition-shadow">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex items-center gap-3">
+                        <img 
+                          src={review.userAvatar || `https://i.pravatar.cc/40?img=${idx + 1}`} 
+                          alt={review.userName} 
+                          className="w-12 h-12 rounded-full object-cover" 
+                        />
+                        <div>
+                          <p className="font-semibold text-gray-900">{review.userName}</p>
+                          <p className="text-sm text-gray-500">{timeText}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <Star
+                            key={star}
+                            className={`w-4 h-4 ${star <= review.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
+                          />
+                        ))}
+                      </div>
                     </div>
+                    <p className="text-gray-700 leading-relaxed">{review.comment}</p>
                   </div>
-                  <div className="flex items-center">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <Star
-                        key={star}
-                        className={`w-4 h-4 ${star <= review.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
-                      />
-                    ))}
-                  </div>
-                </div>
-                <p className="text-gray-700 leading-relaxed">{review.comment}</p>
+                );
+              })
+            ) : (
+              <div className="text-center py-8 text-gray-500">
+                Chưa có đánh giá nào cho sản phẩm này.
               </div>
-            ))}
+            )}
           </div>
 
           <button className="w-full mt-6 border-2 border-purple-600 text-purple-600 font-semibold py-3 px-6 rounded-xl hover:bg-purple-50 transition-all">

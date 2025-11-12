@@ -1,10 +1,11 @@
-import { Button, Form, Input, message, Select, Row, Col, InputNumber, Upload } from 'antd'
+import { Button, Form, Input, message, Select, Row, Col, InputNumber, Upload, DatePicker } from 'antd'
 import axios from 'axios'
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import { IProducts } from '../../types/product'
 import api from '@/config/axios.customize'
-import { LoadingOutlined, PlusOutlined } from '@ant-design/icons'
+import { LoadingOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/icons'
+import dayjs from 'dayjs'
 
 const ProductsAdd = () => {
   const formItemLayout = {
@@ -17,34 +18,41 @@ const ProductsAdd = () => {
   const [form] = Form.useForm()
   const { TextArea } = Input
   const [image, setImage] = useState<string>('')
+  const [images, setImages] = useState<string[]>([])
   const [loading, setLoading] = useState<boolean>(false)
+  const [uploadingImages, setUploadingImages] = useState<boolean>(false)
 
-  const onFinish = async (values: IProducts) => {
+  const onFinish = async (values: any) => {
     try {
-      console.log('Submitting product:', values);
-      
-      // Đảm bảo imageUrl có giá trị
-      if (!values.imageUrl) {
-        message.error('Vui lòng tải lên hình ảnh sản phẩm!');
+      if (!values.imageUrl && images.length === 0) {
+        message.error('Vui lòng tải lên ít nhất một hình ảnh sản phẩm!');
         return;
       }
 
-      const response = await api.post('api/products/add', {
+      const productData: any = {
         name: values.name,
         price: values.price,
         category: values.category,
-        imageUrl: values.imageUrl,
+        imageUrl: values.imageUrl || images[0] || '',
+        images: images.length > 0 ? images : (values.imageUrl ? [values.imageUrl] : []),
         stock: values.stock || 0,
         description: values.description || '',
-        status: values.status || 'Sẵn'
-      });
+        status: values.status || 'Sẵn',
+        discountPercent: values.discountPercent || 0,
+        rating: values.rating || 0,
+        publisher: values.publisher || '',
+        releaseDate: values.releaseDate ? dayjs(values.releaseDate).toISOString() : null,
+        language: values.language || '',
+        pages: values.pages || null,
+        age: values.age || '',
+        dimensions: values.dimensions || ''
+      };
 
-      console.log('Product added successfully:', response.data);
+      const response = await api.post('api/products/add', productData);
+
       message.success(response.data.message || 'Thêm sản phẩm thành công!');
       nav('/products');
     } catch (err: any) {
-      console.error('Error adding product:', err);
-      
       if (err.response) {
         const errorMessage = err.response.data?.message || err.response.data?.error || 'Thêm sản phẩm thất bại!';
         message.error(errorMessage);
@@ -55,9 +63,13 @@ const ProductsAdd = () => {
       }
     }
   }
-  const uploadImage = async (file: File) => {
+  const uploadImage = async (file: File, isMultiple: boolean = false) => {
     if (!file) return
-    setLoading(true)
+    if (isMultiple) {
+      setUploadingImages(true)
+    } else {
+      setLoading(true)
+    }
 
     const formData = new FormData()
     formData.append('file', file)
@@ -68,13 +80,27 @@ const ProductsAdd = () => {
         'https://api.cloudinary.com/v1_1/dkpfaleot/image/upload',
         formData
       )
-      setImage(data.url)
-      form.setFieldsValue({ imageUrl: data.url })
-      setLoading(false)
+      if (isMultiple) {
+        setImages([...images, data.url])
+        setUploadingImages(false)
+      } else {
+        setImage(data.url)
+        form.setFieldsValue({ imageUrl: data.url })
+        setLoading(false)
+      }
     } catch (error) {
-      console.error('Tải hình ảnh lên thất bại:', error)
-      setLoading(false)
+      message.error('Tải hình ảnh lên thất bại')
+      if (isMultiple) {
+        setUploadingImages(false)
+      } else {
+        setLoading(false)
+      }
     }
+  }
+
+  const removeImage = (index: number) => {
+    const newImages = images.filter((_, i) => i !== index)
+    setImages(newImages)
   }
 
   return (

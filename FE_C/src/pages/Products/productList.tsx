@@ -14,6 +14,8 @@ type Product = {
   imageUrl: string;
   stock: number;
   status?: string;
+  discountPercent?: number;
+  rating?: number;
 };
 
 const categories = ['Tiểu thuyết', 'Ngôn tình', 'Trinh thám', 'Huyền Bí', 'Light Novel', 'Truyện tranh', 'Tác phẩm kinh điển', 'Du ký', 'Phóng sự', 'Hài hước'];
@@ -89,10 +91,29 @@ const ProductCard = ({ product }: { product: Product }) => {
           <span className="bg-orange-100 text-orange-700 text-xs px-2 py-0.5 rounded-full">
             {product.category || 'Không rõ thể loại'}
           </span>
-          <span className="font-bold text-red-500 text-base">
-            {product.price.toLocaleString()}
-          </span>
+          <div className="flex flex-col items-end">
+            <span className="font-bold text-red-500 text-base">
+              {product.discountPercent && product.discountPercent > 0
+                ? (product.price * (1 - product.discountPercent / 100)).toLocaleString()
+                : product.price.toLocaleString()}
+            </span>
+            {product.discountPercent && product.discountPercent > 0 && (
+              <span className="text-xs text-gray-400 line-through">
+                {product.price.toLocaleString()}
+              </span>
+            )}
+          </div>
         </div>
+        {product.rating && product.rating > 0 && (
+          <div className="flex items-center gap-1 mb-2">
+            <div className="flex text-yellow-400 text-xs">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <span key={star}>{star <= Math.round(product.rating || 0) ? '★' : '☆'}</span>
+              ))}
+            </div>
+            <span className="text-xs text-gray-500">({(product.rating || 0).toFixed(1)})</span>
+          </div>
+        )}
         <div className="relative h-6 rounded-full overflow-hidden text-white text-sm text-center bg-[#9966cb]">
           <div
             className={`absolute top-0 left-0 h-full transition-all duration-500 ${
@@ -122,20 +143,14 @@ const ProductList: React.FC = () => {
     const fetchProducts = async () => {
       try {
         const res = await api.get('api/products');
-        console.log('Products response:', res.data);
         if (res.data && res.data.data && Array.isArray(res.data.data)) {
           setProducts(res.data.data);
         } else if (Array.isArray(res.data)) {
           setProducts(res.data);
         } else {
-          console.error('Dữ liệu không hợp lệ:', res.data);
           setProducts([]);
         }
       } catch (err: any) {
-        console.error('Lỗi khi fetch sản phẩm:', err);
-        if (err.response) {
-          console.error('Response error:', err.response.data);
-        }
         setProducts([]);
       }
     };

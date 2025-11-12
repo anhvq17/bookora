@@ -60,7 +60,6 @@ export default function AccountPage() {
 
   const handleSaveProfile = () => {
     setIsEditing(false)
-    // API call to save profile
   }
 
   const handleSetDefaultAddress = (id: number) => {
@@ -438,7 +437,7 @@ export default function AccountPage() {
                             <span className="text-gray-600">{order.items} sản phẩm</span>
                             <div className="flex items-center space-x-4">
                               <span className="font-semibold text-[#4f0f87]">
-                                {order.total.toLocaleString("vi-VN")}đ
+                                {order.total.toLocaleString("vi-VN")}
                               </span>
                               <button className="border border-gray-300 px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors">
                                 Xem chi tiết

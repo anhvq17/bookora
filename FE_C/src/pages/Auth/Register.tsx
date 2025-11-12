@@ -20,7 +20,6 @@ const Register = () => {
 
   const onFinish = async (values: IRegister) => {
     try {
-      // Format address: nếu có dấu phẩy thì split, nếu không thì dùng toàn bộ
       const addressParts = values.address.split(',');
       const formattedAddress = addressParts.length > 1 
         ? [
@@ -51,10 +50,8 @@ const Register = () => {
     } catch (error:any) {
       if (error.response && error.response.data && error.response.data.message) {
         message.error(error.response.data.message)
-        console.log('Lỗi đăng ký:', error.response.data.message)
       } else {
         message.error('Đăng ký thất bại!')
-        console.log(error)
       }
     }
   }
